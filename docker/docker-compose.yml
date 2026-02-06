@@ -1,0 +1,59 @@
+# Docker Compose spins up all three services with one command.
+# `docker compose -f docker/docker-compose.yml up` from the repo root.
+#
+# Key concepts if you're new to Docker Compose:
+# - Each "service" becomes a container with its own network identity
+# - Services can reference each other by name (e.g., "db" is a hostname)
+# - "volumes" mount host directories into containers for live reloading
+# - "depends_on" controls startup order (but not readiness — hence healthcheck)
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: wisteria
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount source code for hot reload (changes on host → reflected in container)
+      - ../backend:/app
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/wisteria
+      FRONTEND_URL: http://localhost:3000
+      DEBUG: "true"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../frontend/src:/app/src
+      - ../frontend/public:/app/public
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
