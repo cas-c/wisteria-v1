@@ -3,6 +3,9 @@
 Rules and context for AI agents working on this project.
 Read this before making any changes.
 
+For phase-specific implementation details and known pitfalls, see
+[`phase-playbook.md`](phase-playbook.md).
+
 ---
 
 ## Project Context
@@ -142,144 +145,56 @@ cd backend
 alembic revision --autogenerate -m "description"
 alembic upgrade head
 
-# Tests
-cd backend && pytest
+# Tests (inside Docker — no local venv)
+docker compose -f docker/docker-compose.yml exec backend pytest tests/ -v
+
+# Tests create `wisteria_test` DB automatically on first run.
+# Dev data in `wisteria` is never touched.
+
+# Frontend tests
 cd frontend && npm test
 ```
 
 ---
 
-## Documentation Maintenance
+## Testing Strategy
 
-**Docs must stay current.** Outdated docs are worse than no docs. Update
-documentation during or after each phase — don't leave it as a "later" task.
+### Dedicated Test Database
+Tests run against `wisteria_test`, NOT the dev `wisteria` database. See ADR 010.
+- `conftest.py` auto-creates `wisteria_test` on first run (no manual setup).
+- TRUNCATE between tests for isolation — safe because it's a throwaway DB.
+- Dev seed data is never affected by test runs.
 
-### After completing each phase, update:
+### TDD Workflow (Phase 3+)
+We use Red-Green-Refactor for backend services and API routes. See ADR 011.
 
-1. **`docs/todo.md`** — Check off completed items. Add any new tasks that
-   were discovered during implementation. Remove items that turned out to be
-   unnecessary.
+**For each new backend feature:**
+1. Write Pydantic schemas (request/response shapes)
+2. Write failing test cases for the service function
+3. Implement the service until tests pass
+4. Write failing test cases for the route
+5. Implement the route, wire up the service
+6. Refactor while tests stay green
 
-2. **`docs/phase-N-takeaways.md`** — Create a new takeaways file for the
-   phase you just completed (e.g., `phase-1-takeaways.md`). Include:
-   - What was built (file-level summary)
-   - New patterns introduced and how they work
-   - Gotchas encountered and how they were solved
-   - Anything that deviated from the original plan and why
+**TDD applies to:** service functions, API route behavior, auth flows.
+**TDD does NOT apply to:** models (declarative), scripts, config, frontend styling.
 
-3. **`docs/decisions/`** — Add a new ADR file (`NNN-short-title.md`) if you
-   made a significant technical decision that wasn't already documented.
-   Add it to the index table in `docs/decisions/README.md`. If an existing
-   ADR turned out to be wrong and you changed course, update its status to
-   "Revised" and explain what changed.
-
-4. **`docs/agent-instructions.md`** (this file) — Update if:
-   - New architecture rules emerged from implementation
-   - File organization changed (new directories, renamed files)
-   - New pitfalls were discovered
-   - Phase-specific instructions need corrections based on what actually happened
-
-5. **`CLAUDE.md`** — Update if:
-   - A new docs file was created (add it to the Documentation section)
-   - Key rules changed
-   - Quick start commands changed
-
-### During a phase:
-- If you discover something that contradicts the docs, fix the docs immediately.
-  Don't wait until the phase is done.
-- If you add a new pattern or convention, document it before moving on to
-  the next task in the phase.
+**Testing principles:**
+- Test behavior, not implementation details.
+- Use real DB calls (against `wisteria_test`), not mocks.
+- No arbitrary coverage targets — cover critical paths and edge cases.
 
 ---
 
-## Phase-Specific Instructions
+## Documentation Checklist
 
-### Phase 1: Backend Foundation
-- Create `app/models/base.py` with a `Base` class that has `id` (UUID),
-  `created_at`, `updated_at` columns. All models inherit from this.
-- Product model goes in `app/models/product.py`. Use SQLAlchemy `Enum` type
-  for condition and category.
-- AdminUser model goes in `app/models/admin_user.py`.
-- After creating models, update `alembic/env.py` to import Base and set
-  `target_metadata = Base.metadata`.
-- The health endpoint should attempt a simple query (`SELECT 1`) to verify
-  the DB connection is alive.
-- Test the full Docker stack: `docker compose up` → hit health → see DB
-  connected.
+**Docs must stay current.** Update during or after each phase, not "later."
 
-### Phase 2: Product CRUD + Auth
-- Pydantic schemas should use `model_config = ConfigDict(from_attributes=True)`
-  to enable creating schemas from SQLAlchemy model instances.
-- Product service methods should accept `AsyncSession` as their first argument
-  (passed from the route via dependency injection).
-- JWT: use `python-jose` with HS256. Token payload: `{"sub": admin_user.id, "exp": ...}`.
-- The seed script should be a standalone Python script (`backend/scripts/seed.py`)
-  that can be run with `python -m scripts.seed`.
-- Include edge case tests: duplicate slugs, buying unavailable products,
-  invalid JWT, expired JWT.
+After completing a phase, update:
+- [ ] `docs/todo.md` — check off items, add discovered tasks
+- [ ] `docs/phase-N-takeaways.md` — create for the completed phase
+- [ ] `docs/decisions/` — add ADR if a significant decision was made
+- [ ] This file — if architecture rules or file org changed
+- [ ] `CLAUDE.md` — if key rules or commands changed
 
-### Phase 3: Frontend Product Display
-- Use Server Components for product listing and detail pages.
-  Call the backend API directly (server-side fetch, no CORS needed).
-- Build small, composable UI primitives first. Don't skip this step.
-- ProductCard: image, name, price (formatted from cents), condition badge.
-- Mobile-first responsive design. Use Tailwind breakpoints (`sm:`, `md:`, `lg:`).
-
-### Phase 4: Cart
-- Zustand store with `persist` middleware targets localStorage.
-- Cart items are Product objects. Since these are resale items (usually qty=1),
-  adding a duplicate should show a toast, not increment quantity.
-- The cart icon in the header should show item count as a badge.
-- CartDrawer slides out from the right side of the screen.
-
-### Phase 5: Checkout + Stripe
-- **Critical:** The Stripe webhook endpoint must read the raw request body
-  for signature verification. FastAPI parses JSON by default — use
-  `Request.body()` to get raw bytes before any parsing.
-- Create Order + OrderItems in the webhook handler, NOT in the checkout
-  endpoint. The checkout endpoint only creates a Stripe session.
-- After order creation, mark all purchased products as `is_available = False`.
-- Send confirmation email via Resend in the webhook handler.
-- Test locally with `stripe listen --forward-to localhost:8000/api/v1/webhooks/stripe`.
-
-### Phase 6: Admin Panel
-- JWT stored in memory (Zustand store, NOT localStorage — avoids XSS).
-- Admin layout: sidebar with nav links, main content area.
-- Auth guard: if no valid JWT, redirect to /admin/login.
-- Product soft-delete: set `is_available = False`, don't actually DELETE.
-- Order status updates: dropdown with pending → paid → shipped → cancelled.
-
-### Phase 7: Polish + Deploy
-- error.tsx at the app root and in key route segments.
-- Loading skeletons that match the actual content layout (not generic spinners).
-- Vercel: set `NEXT_PUBLIC_API_URL` to the Railway backend URL.
-- Railway: set all env vars from `.env.example`, use Railway's managed Postgres.
-- Production Stripe webhook URL: `https://your-railway-url/api/v1/webhooks/stripe`.
-
----
-
-## Common Pitfalls to Avoid
-
-1. **Don't return SQLAlchemy models directly from routes.** Always convert to
-   Pydantic schemas. SQLAlchemy models have lazy-loaded relationships that
-   break serialization.
-
-2. **Don't forget `await` on async DB operations.** SQLAlchemy async will
-   silently return a coroutine object instead of results if you forget `await`.
-
-3. **Don't parse the Stripe webhook body as JSON before verifying the signature.**
-   The signature is computed over the raw bytes. If you parse + re-serialize,
-   the bytes change and verification fails.
-
-4. **Don't use `float` for money anywhere.** Not in Python, not in TypeScript,
-   not in the database. Always integer cents.
-
-5. **Don't commit Alembic migrations without reviewing them.** Autogenerate
-   is a suggestion, not gospel. It sometimes drops columns it shouldn't or
-   creates redundant indexes.
-
-6. **Don't use `git add .` or `git add -A`.** Always add specific files.
-   The `.env` files contain secrets.
-
-7. **Don't install frontend dependencies (Zustand, etc.) until the phase
-   that needs them.** Keeps the working tree clean and focused.
+If you discover something that contradicts the docs mid-phase, fix it immediately.

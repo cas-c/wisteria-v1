@@ -22,8 +22,12 @@ class Settings(BaseSettings):
     # Database — asyncpg connection string
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/wisteria"
 
-    # Auth
-    secret_key: str = "change-me-in-production"
+    # Test database — separate DB so tests never touch dev data.
+    # Created automatically by the test conftest if it doesn't exist.
+    test_database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/wisteria_test"
+
+    # Auth — no default: forces the env var to be set. App won't start without it.
+    secret_key: str
     access_token_expire_minutes: int = 60 * 24  # 24 hours
 
     # Stripe

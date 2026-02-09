@@ -15,6 +15,9 @@ select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 # B008: FastAPI uses Depends() in function defaults by design.
 # This is the official pattern, not a bug.
 "app/routers/*.py" = ["B008"]
+"app/dependencies.py" = ["B008"]
+# Seed script has long description strings — data, not code.
+"scripts/seed.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -23,4 +26,5 @@ plugins = ["pydantic.mypy"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]

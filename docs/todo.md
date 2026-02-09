@@ -33,17 +33,22 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [x] mypy strict mode — passes clean on all 14 source files
 - [x] Fixed `resend==2.5.0` → `resend==2.5.1` (version didn't exist on PyPI)
 
-## Phase 2: Product CRUD + Auth
-- [ ] Pydantic v2 schemas: ProductCreate, ProductUpdate, ProductResponse, ProductListParams
-- [ ] Product service (list, get_by_slug, create, update, soft_delete)
-- [ ] Public routes: GET /products (paginated, filterable), GET /products/{slug}
-- [ ] Password hashing utility (passlib + bcrypt)
-- [ ] JWT utility (create_access_token, decode_token)
-- [ ] `get_current_admin` dependency (extract + validate JWT from Authorization header)
-- [ ] Auth router: POST /auth/login (returns JWT)
-- [ ] Admin product routes: GET/POST /admin/products, PUT/DELETE /admin/products/{id}
-- [ ] Seed script: create admin user + 8-10 sample figurine products
-- [ ] Backend tests: product CRUD, auth, edge cases
+## Phase 2: Product CRUD + Auth ✅
+- [x] Pydantic v2 schemas: ProductCreate, ProductUpdate, ProductResponse, ProductListParams — `app/schemas/product.py`
+- [x] Auth schemas: LoginRequest, TokenResponse — `app/schemas/auth.py`
+- [x] Product service (list, get_by_slug, get_by_id, create, update, soft_delete) — `app/services/product.py`
+- [x] Auth service (authenticate_admin) — `app/services/auth.py`
+- [x] Public routes: GET /products (paginated, filterable), GET /products/{slug} — `app/routers/products.py`
+- [x] Password hashing utility (bcrypt direct, replaced passlib) — `app/utils/security.py`
+- [x] JWT utility (create_access_token, decode_token) — `app/utils/security.py`
+- [x] `get_current_admin` dependency (HTTPBearer + JWT + DB lookup) — `app/dependencies.py`
+- [x] Auth router: POST /auth/login (returns JWT) — `app/routers/auth.py`
+- [x] Admin product routes: GET/POST /admin/products, GET/PUT/DELETE /admin/products/{id} — `app/routers/admin_products.py`
+- [x] Duplicate slug handling: returns 409 Conflict
+- [x] Seed script: admin user + 10 sample figurine products — `scripts/seed.py`
+- [x] Backend tests: 34 tests covering product CRUD, auth, JWT validation, edge cases
+- [x] Test infrastructure: conftest with NullPool, TRUNCATE-based isolation
+- [x] Ruff clean, all linting passes
 
 ## Phase 3: Frontend Product Display
 - [ ] Root layout (html, body, font, metadata)

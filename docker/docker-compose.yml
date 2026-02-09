@@ -35,6 +35,8 @@ services:
       - ../backend:/app
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/wisteria
+      TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/wisteria_test
+      SECRET_KEY: local-dev-secret-not-for-production
       FRONTEND_URL: http://localhost:3000
       DEBUG: "true"
     depends_on:

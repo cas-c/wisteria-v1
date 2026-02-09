@@ -36,3 +36,7 @@ approaches, or make a decision that a future reader might question.
 | [006](006-resend-email.md) | Resend for transactional email | 0 |
 | [007](007-docker-compose-local-dev.md) | Docker Compose for local development | 0 |
 | [008](008-server-vs-client-components.md) | Server Components default, Client for interactivity | 0 |
+| [009](009-bcrypt-direct-over-passlib.md) | Direct bcrypt over passlib for password hashing | 2 |
+| [010](010-dedicated-test-database.md) | Dedicated `wisteria_test` database for tests | 2 |
+| [011](011-tdd-approach.md) | TDD for backend services and routes going forward | 2 |
+| [012](012-security-hardening.md) | Security hardening plan (rate limiting, PyJWT, headers) | 2 |

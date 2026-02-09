@@ -4,11 +4,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
 
 from app.config import settings
 from app.database import engine
-from app.routers import health
+from app.rate_limit import limiter
+from app.routers import admin_products, auth, health, products
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +39,12 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Rate limiting — prevents brute-force attacks on login.
+# slowapi stores hit counts in memory by default. For multi-process
+# production deployments, switch to a Redis backend.
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # CORS — allows the Next.js frontend to call this API.
 # In production, lock this down to your actual domain.
 app.add_middleware(
@@ -48,3 +57,6 @@ app.add_middleware(
 
 # Register routers
 app.include_router(health.router, prefix=settings.api_v1_prefix)
+app.include_router(auth.router, prefix=settings.api_v1_prefix)
+app.include_router(products.router, prefix=settings.api_v1_prefix)
+app.include_router(admin_products.router, prefix=settings.api_v1_prefix)
