@@ -23,6 +23,7 @@ docker compose -f docker/docker-compose.yml up
 - `docs/todo.md` — Granular task checklist for all phases.
 - `docs/plan.md` — Original project plan (phases, schema, API endpoints, full spec).
 - `docs/phase-0-takeaways.md` — FastAPI/SQLAlchemy/Docker patterns with explanations.
+- `docs/phase-1-takeaways.md` — SQLAlchemy 2.0 model patterns, Alembic workflow, Ruff/mypy setup.
 
 ## Overrides from Parent Workspace
 - **Test location:** Parent CLAUDE.md says "collocate tests with source files." For this project: backend uses `backend/tests/` (Python convention), frontend colocates tests alongside source files (JS/TS convention). Both are correct for their ecosystems.

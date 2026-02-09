@@ -13,10 +13,12 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.config import settings
 
-# This will be our Base.metadata once we define models
-# from app.models.base import Base
-# target_metadata = Base.metadata
-target_metadata = None
+# Import all models so Alembic can detect them for autogenerate.
+# The models __init__ re-exports everything and ensures all tables
+# are registered on Base.metadata.
+from app.models import Base  # noqa: E402
+
+target_metadata = Base.metadata
 
 config = context.config
 

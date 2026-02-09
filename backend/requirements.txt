@@ -19,7 +19,7 @@ passlib[bcrypt]==1.7.4
 stripe==11.4.1
 
 # Email
-resend==2.5.0
+resend==2.5.1
 
 # Dev / test
 pytest==8.3.4

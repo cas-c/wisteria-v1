@@ -11,6 +11,11 @@ line-length = 100
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
 
+[tool.ruff.lint.per-file-ignores]
+# B008: FastAPI uses Depends() in function defaults by design.
+# This is the official pattern, not a bug.
+"app/routers/*.py" = ["B008"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

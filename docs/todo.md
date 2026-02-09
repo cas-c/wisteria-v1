@@ -14,24 +14,24 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [x] .env.example files
 - [x] Root .gitignore
 - [x] Project CLAUDE.md
-- [ ] Ruff/mypy config (deferred — add when there's code to lint)
+- [x] Ruff/mypy config in pyproject.toml
 - [ ] Prettier config (deferred — ESLint in place from create-next-app)
-- [ ] pyproject.toml (deferred — add when tool configs needed)
 
 ---
 
-## Phase 1: Backend Foundation
-- [ ] Base SQLAlchemy model (id, created_at, updated_at mixin)
-- [ ] Product model with all columns (UUID PK, slug, price_cents, condition enum, category enum, etc.)
-- [ ] AdminUser model (UUID PK, email, password_hash)
-- [ ] Uncomment `target_metadata` in `alembic/env.py` to point at Base.metadata
-- [ ] Generate initial Alembic migration (`alembic revision --autogenerate`)
-- [ ] Run migration (`alembic upgrade head`)
-- [ ] Add DB ping to health endpoint (verify async connection works)
-- [ ] Add DB connection check in lifespan startup
-- [ ] Verify: `docker compose up`, hit `/api/v1/health`, confirm DB connects
-- [ ] Ruff config (pyproject.toml or ruff.toml)
-- [ ] mypy config
+## Phase 1: Backend Foundation ✅
+- [x] Base SQLAlchemy model (id UUID, created_at, updated_at) — `app/models/base.py`
+- [x] Product model with all columns (enums, slug, price_cents) — `app/models/product.py`
+- [x] AdminUser model (email, password_hash) — `app/models/admin_user.py`
+- [x] Update `alembic/env.py` to import Base and set `target_metadata`
+- [x] Generate initial Alembic migration (autogenerate detected both tables + indexes)
+- [x] Run migration (`alembic upgrade head`) — tables confirmed in Postgres
+- [x] Add DB ping to health endpoint (`SELECT 1` via Depends(get_db))
+- [x] Add DB connection check in lifespan startup (fail-fast if DB unreachable)
+- [x] Verify: `docker compose up`, hit `/api/v1/health`, confirmed `{"status":"ok","database":"connected"}`
+- [x] Ruff config — added per-file-ignores for B008 (FastAPI Depends pattern)
+- [x] mypy strict mode — passes clean on all 14 source files
+- [x] Fixed `resend==2.5.0` → `resend==2.5.1` (version didn't exist on PyPI)
 
 ## Phase 2: Product CRUD + Auth
 - [ ] Pydantic v2 schemas: ProductCreate, ProductUpdate, ProductResponse, ProductListParams
