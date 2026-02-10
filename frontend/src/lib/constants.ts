@@ -1,4 +1,17 @@
+/**
+ * API base URL for server-side requests (SSR/ISR).
+ * Uses internal Docker network URL when available, falls back to localhost.
+ */
 export const API_BASE_URL =
+  process.env.API_URL_INTERNAL ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  "http://localhost:8000/api/v1";
+
+/**
+ * API base URL for client-side requests (browser).
+ * Always uses localhost since the browser is outside the Docker network.
+ */
+export const API_BASE_URL_CLIENT =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
 export const SITE_NAME = "Wisteria";

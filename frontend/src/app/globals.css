@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base colors — soft and warm palette */
+  --background: #fafaf9;
+  --foreground: #292524;
+  --card: #ffffff;
+  --card-foreground: #292524;
+  --accent: #8b5cf6;
+  --accent-foreground: #ffffff;
+  --muted: #f5f5f4;
+  --muted-foreground: #78716c;
+  --border: #e7e5e4;
+  --ring: #8b5cf6;
+
+  /* Badge colors for product condition */
+  --badge-new: #22c55e;
+  --badge-new-foreground: #ffffff;
+  --badge-like-new: #3b82f6;
+  --badge-like-new-foreground: #ffffff;
+  --badge-used: #f59e0b;
+  --badge-used-foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-badge-new: var(--badge-new);
+  --color-badge-new-foreground: var(--badge-new-foreground);
+  --color-badge-like-new: var(--badge-like-new);
+  --color-badge-like-new-foreground: var(--badge-like-new-foreground);
+  --color-badge-used: var(--badge-used);
+  --color-badge-used-foreground: var(--badge-used-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-playfair);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1c1917;
+    --foreground: #fafaf9;
+    --card: #292524;
+    --card-foreground: #fafaf9;
+    --accent: #a78bfa;
+    --accent-foreground: #1c1917;
+    --muted: #44403c;
+    --muted-foreground: #a8a29e;
+    --border: #44403c;
+    --ring: #a78bfa;
+
+    /* Badge colors remain vibrant in dark mode */
+    --badge-new: #22c55e;
+    --badge-like-new: #3b82f6;
+    --badge-used: #f59e0b;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
 }

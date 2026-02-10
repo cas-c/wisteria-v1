@@ -6,14 +6,17 @@ import { API_BASE_URL } from "./constants";
  * - Automatically prepends the API base URL
  * - Sets JSON content type for request bodies
  * - Throws on non-2xx responses with the error detail from FastAPI
+ * - Supports Next.js fetch extensions (cache, revalidate) for ISR
  *
  * Usage:
  *   const products = await api<PaginatedResponse<Product>>("/products");
- *   const product = await api<Product>("/products/my-slug");
+ *   const product = await api<Product>("/products/my-slug", {
+ *     next: { revalidate: 60 }
+ *   });
  */
 export async function api<T>(
   path: string,
-  options: RequestInit = {},
+  options: RequestInit & { next?: { revalidate?: number } } = {},
 ): Promise<T> {
   const url = `${API_BASE_URL}${path}`;
 
