@@ -53,7 +53,10 @@ services:
       - ../frontend/src:/app/src
       - ../frontend/public:/app/public
     environment:
+      # Client-side (browser) API URL — uses localhost since browser is outside Docker
       NEXT_PUBLIC_API_URL: http://localhost:8000/api/v1
+      # Server-side (SSR/ISR) API URL — uses Docker service name
+      API_URL_INTERNAL: http://backend:8000/api/v1
     depends_on:
       - backend
 

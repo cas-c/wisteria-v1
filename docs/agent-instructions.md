@@ -15,6 +15,7 @@ strong TypeScript/Next.js developer learning Python/FastAPI as she builds this.
 
 **Always explain Python/FastAPI idioms and patterns when using them.**
 Don't just write the code — teach why it's done that way, especially for:
+
 - SQLAlchemy patterns (relationships, queries, session management)
 - FastAPI dependency injection
 - Pydantic model/schema patterns
@@ -28,6 +29,7 @@ TypeScript/Next.js/React patterns don't need explanation unless unusual.
 ## Architecture Rules
 
 ### Backend (Python / FastAPI)
+
 - **Async everywhere.** All routes are `async def`. All DB queries use
   `await`. Never use sync SQLAlchemy methods.
 - **Service layer pattern.** Routes handle HTTP concerns (parsing request,
@@ -48,6 +50,7 @@ TypeScript/Next.js/React patterns don't need explanation unless unusual.
   (`/admin/products/{id}`).
 
 ### Frontend (TypeScript / Next.js)
+
 - **TypeScript strict mode.** No `any` types. No `// @ts-ignore`.
 - **Named exports only.** No `export default`.
 - **Server Components by default.** Only add `"use client"` when the component
@@ -60,6 +63,7 @@ TypeScript/Next.js/React patterns don't need explanation unless unusual.
 - **Tailwind for all styling.** No CSS modules, no styled-components.
 
 ### Database
+
 - **Alembic for all schema changes.** Never modify the DB manually.
   Always: change model → `alembic revision --autogenerate` → review
   generated migration → `alembic upgrade head`.
@@ -71,6 +75,7 @@ TypeScript/Next.js/React patterns don't need explanation unless unusual.
 ## File Organization
 
 ### Backend
+
 ```
 backend/app/
   config.py          — Settings singleton (pydantic-settings)
@@ -85,6 +90,7 @@ backend/app/
 ```
 
 ### Frontend
+
 ```
 frontend/src/
   app/               — Next.js App Router pages and layouts
@@ -105,6 +111,7 @@ frontend/src/
 ## Coding Standards
 
 ### Python
+
 - Format/lint with Ruff (replaces Black + isort + flake8)
 - Type check with mypy (strict mode)
 - Use `collections.abc` imports (not `typing`) for `AsyncGenerator`, `Sequence`, etc.
@@ -112,12 +119,14 @@ frontend/src/
 - f-strings over `.format()` or `%`
 
 ### TypeScript
+
 - ESLint (configured by create-next-app)
 - Interfaces for public APIs, types for internal models
 - `async/await` over promise chains
 - Descriptive variable names (no single-letter vars except loop indices)
 
 ### Both
+
 - Comments only when logic isn't self-evident
 - Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`
 - Components/modules under 300 lines; extract when they grow
@@ -151,8 +160,17 @@ docker compose -f docker/docker-compose.yml exec backend pytest tests/ -v
 # Tests create `wisteria_test` DB automatically on first run.
 # Dev data in `wisteria` is never touched.
 
-# Frontend tests
-cd frontend && npm test
+# Frontend tests (E2E with Playwright)
+cd frontend
+npm run test:e2e          # Headless mode, runs against running Docker stack
+npm run test:e2e:ui       # Interactive UI mode (shows browsers, allows debugging)
+npm run test:e2e:headed   # Headed mode (shows browser windows as tests run)
+
+# Playwright configuration:
+# - baseURL: http://localhost:3000
+# - Test files in: frontend/tests/e2e/*.spec.ts
+# - Runs against all 3 browsers: Chromium, Firefox, WebKit
+# - Screenshots and videos on failure, traces on retry
 ```
 
 ---
@@ -160,15 +178,19 @@ cd frontend && npm test
 ## Testing Strategy
 
 ### Dedicated Test Database
+
 Tests run against `wisteria_test`, NOT the dev `wisteria` database. See ADR 010.
+
 - `conftest.py` auto-creates `wisteria_test` on first run (no manual setup).
 - TRUNCATE between tests for isolation — safe because it's a throwaway DB.
 - Dev seed data is never affected by test runs.
 
 ### TDD Workflow (Phase 3+)
+
 We use Red-Green-Refactor for backend services and API routes. See ADR 011.
 
 **For each new backend feature:**
+
 1. Write Pydantic schemas (request/response shapes)
 2. Write failing test cases for the service function
 3. Implement the service until tests pass
@@ -180,6 +202,7 @@ We use Red-Green-Refactor for backend services and API routes. See ADR 011.
 **TDD does NOT apply to:** models (declarative), scripts, config, frontend styling.
 
 **Testing principles:**
+
 - Test behavior, not implementation details.
 - Use real DB calls (against `wisteria_test`), not mocks.
 - No arbitrary coverage targets — cover critical paths and edge cases.
@@ -191,6 +214,7 @@ We use Red-Green-Refactor for backend services and API routes. See ADR 011.
 **Docs must stay current.** Update during or after each phase, not "later."
 
 After completing a phase, update:
+
 - [ ] `docs/todo.md` — check off items, add discovered tasks
 - [ ] `docs/phase-N-takeaways.md` — create for the completed phase
 - [ ] `docs/decisions/` — add ADR if a significant decision was made

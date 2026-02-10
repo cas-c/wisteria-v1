@@ -5,6 +5,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 ---
 
 ## Phase 0: Scaffolding ✅
+
 - [x] Monorepo directory structure
 - [x] FastAPI backend skeleton (config, database, main, health router)
 - [x] Alembic migration environment (async-compatible)
@@ -20,6 +21,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 ---
 
 ## Phase 1: Backend Foundation ✅
+
 - [x] Base SQLAlchemy model (id UUID, created_at, updated_at) — `app/models/base.py`
 - [x] Product model with all columns (enums, slug, price_cents) — `app/models/product.py`
 - [x] AdminUser model (email, password_hash) — `app/models/admin_user.py`
@@ -34,6 +36,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [x] Fixed `resend==2.5.0` → `resend==2.5.1` (version didn't exist on PyPI)
 
 ## Phase 2: Product CRUD + Auth ✅
+
 - [x] Pydantic v2 schemas: ProductCreate, ProductUpdate, ProductResponse, ProductListParams — `app/schemas/product.py`
 - [x] Auth schemas: LoginRequest, TokenResponse — `app/schemas/auth.py`
 - [x] Product service (list, get_by_slug, get_by_id, create, update, soft_delete) — `app/services/product.py`
@@ -50,18 +53,21 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [x] Test infrastructure: conftest with NullPool, TRUNCATE-based isolation
 - [x] Ruff clean, all linting passes
 
-## Phase 3: Frontend Product Display
-- [ ] Root layout (html, body, font, metadata)
-- [ ] UI primitives: Button, Card, Badge, Skeleton, Input components
-- [ ] Layout components: Header (with cart icon), Footer, MobileNav
-- [ ] Product components: ProductCard, ProductGrid, ConditionBadge, ProductImage
-- [ ] Homepage: featured products grid (Server Component, fetches from API)
-- [ ] /products page: full catalog with category/condition display
-- [ ] /products/[slug] page: large image, description, price, condition, add-to-cart button
-- [ ] Responsive design pass (mobile-first)
-- [ ] Loading skeletons for product pages
+## Phase 3: Frontend Product Display ✅
+
+- [x] Root layout (html, body, font, metadata)
+- [x] UI primitives: Button, Card, Badge, Skeleton, Input components
+- [x] Layout components: Header (with cart icon), Footer, MobileNav
+- [x] Product components: ProductCard, ProductGrid, ConditionBadge, ProductImage
+- [x] Homepage: featured products grid (Server Component, fetches from API)
+- [x] /products page: full catalog with category/condition display
+- [x] /products/[slug] page: large image, description, price, condition, add-to-cart button
+- [x] Responsive design pass (mobile-first)
+- [x] Loading skeletons for product pages
+- [x] E2E testing: Playwright setup, 5 test files (homepage, catalog, product-detail, responsive, loading), ~20 tests total
 
 ## Phase 4: Cart
+
 - [ ] Install Zustand
 - [ ] Cart store: items, addItem, removeItem, clearCart, totalCents (with persist middleware)
 - [ ] Duplicate item prevention (toast instead of quantity increment — resale items are unique)
@@ -73,6 +79,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [ ] Cart store unit tests
 
 ## Phase 5: Checkout + Stripe
+
 - [ ] Order + OrderItem SQLAlchemy models
 - [ ] Alembic migration for orders tables
 - [ ] Stripe service (create_checkout_session)
@@ -89,6 +96,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [ ] Backend tests: checkout flow, webhook handling, buying unavailable product
 
 ## Phase 6: Admin Panel
+
 - [ ] Admin login page (/admin/login)
 - [ ] Admin layout with sidebar navigation + auth guard (redirect if no JWT)
 - [ ] useAdmin hook (store JWT, login/logout, check expiry)
@@ -98,6 +106,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [ ] Admin CRUD backend tests
 
 ## Phase 7: Polish + Deploy
+
 - [ ] Global error handling (error.tsx boundaries)
 - [ ] Loading skeletons for all pages
 - [ ] Empty states (no products, empty cart, no orders)
