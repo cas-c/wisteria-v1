@@ -66,17 +66,28 @@ Tracks remaining work across all phases. Items are checked off as completed.
 - [x] Loading skeletons for product pages
 - [x] E2E testing: Playwright setup, 5 test files (homepage, catalog, product-detail, responsive, loading), ~20 tests total
 
-## Phase 4: Cart
+## Phase 4A: Cart Store & State Management ✅
 
-- [ ] Install Zustand
-- [ ] Cart store: items, addItem, removeItem, clearCart, totalCents (with persist middleware)
-- [ ] Duplicate item prevention (toast instead of quantity increment — resale items are unique)
-- [ ] CartDrawer component (slide-out panel from header icon)
-- [ ] CartItem component (image, name, price, remove button)
-- [ ] CartSummary component (item count, subtotal)
-- [ ] Cart icon with item count badge in Header
-- [ ] /cart page (full cart view, proceed to checkout button)
-- [ ] Cart store unit tests
+- [x] Install Zustand and react-hot-toast
+- [x] Create cart store with persist middleware (items, addItem, removeItem, clearCart, totalCents)
+- [x] Implement duplicate item prevention logic (toast instead of quantity increment)
+- [x] Write cart store unit tests (addItem, removeItem, clearCart, duplicate handling, totalCents calculation)
+- [x] Configure Jest for unit testing (with SWC transform, jsdom environment)
+- [x] Add ToastProvider to root layout
+
+## Phase 4B: Cart UI Components ✅
+
+- [x] Build CartItem component (image, name, price, remove button)
+- [x] Build CartSummary component (item count, subtotal)
+- [x] Build CartDrawer component (slide-out panel from right side)
+- [x] Update Header with cart icon and item count badge
+- [x] Add drawer state to cart store (persisted with cart items)
+
+## Phase 4C: Cart Page & Integration
+
+- [ ] Create /cart page (full cart view, proceed to checkout button)
+- [ ] Wire up add-to-cart button on product detail page
+- [ ] End-to-end manual testing of cart flow (browse → add → view drawer → cart page → remove)
 
 ## Phase 5: Checkout + Stripe
 

@@ -43,12 +43,39 @@ conventions, see [`agent-instructions.md`](agent-instructions.md).
 - **TDD for any new backend work** (e.g., if API changes are needed for
   the frontend). Write tests first, then implement. See ADR 011.
 
-## Phase 4: Cart
-- Zustand store with `persist` middleware targets localStorage.
-- Cart items are Product objects. Since these are resale items (usually qty=1),
-  adding a duplicate should show a toast, not increment quantity.
-- The cart icon in the header should show item count as a badge.
-- CartDrawer slides out from the right side of the screen.
+## Phase 4A: Cart Store & State Management
+- Install `zustand` and `react-hot-toast` (for duplicate item warnings).
+- Cart store location: `frontend/src/stores/cart.ts`.
+- Use Zustand's `persist` middleware to save cart to localStorage. Key: `wisteria-cart`.
+- Cart items are full Product objects (id, name, slug, price_cents, etc.).
+- Since these are resale items (usually qty=1), adding a duplicate item should:
+  - NOT add it again or increment quantity
+  - Show a toast: "This item is already in your cart"
+- Store methods:
+  - `addItem(product: Product)` — add if not present, toast if duplicate
+  - `removeItem(productId: string)` — remove by product ID
+  - `clearCart()` — empty the cart
+  - `totalCents` — computed from `items.reduce((sum, item) => sum + item.price_cents, 0)`
+- Write unit tests for the store (Jest + @testing-library/react for hook testing).
+
+## Phase 4B: Cart UI Components
+- All cart components go in `frontend/src/components/cart/`.
+- CartItem: shows product image (thumbnail), name, formatted price, remove button.
+- CartSummary: shows item count and formatted subtotal. Used in both drawer and cart page.
+- CartDrawer: slide-out panel from right side. Use Tailwind for slide animation.
+  - Triggered by clicking cart icon in Header
+  - Shows CartItem list + CartSummary + "View Cart" link
+- Update Header: add cart icon (shopping bag) with item count badge (pill showing number).
+
+## Phase 4C: Cart Page & Integration
+- Cart page location: `frontend/src/app/cart/page.tsx`.
+- Full-width cart view with CartItem list, CartSummary, and "Proceed to Checkout" button.
+- Empty state: "Your cart is empty" with link back to /products.
+- Wire up the "Add to Cart" button on product detail page (`/products/[slug]`):
+  - Must be a Client Component (needs onClick handler)
+  - Extract button into its own component or add `"use client"` to necessary part
+- Manual test flow: browse products → add item → see drawer → add duplicate (toast) →
+  view cart page → remove item → cart updates → refresh page (persistence check).
 
 ## Phase 5: Checkout + Stripe
 - **Security:** Add request body size limit (see ADR 012).
