@@ -85,8 +85,8 @@ Tracks remaining work across all phases. Items are checked off as completed.
 
 ## Phase 4C: Cart Page & Integration
 
-- [ ] Create /cart page (full cart view, proceed to checkout button)
-- [ ] Wire up add-to-cart button on product detail page
+- [x] Create /cart page (full cart view, proceed to checkout button)
+- [x] Wire up add-to-cart button on product detail page
 - [ ] End-to-end manual testing of cart flow (browse → add → view drawer → cart page → remove)
 
 ## Phase 5: Checkout + Stripe
