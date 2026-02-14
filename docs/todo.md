@@ -87,7 +87,7 @@ Tracks remaining work across all phases. Items are checked off as completed.
 
 - [x] Create /cart page (full cart view, proceed to checkout button)
 - [x] Wire up add-to-cart button on product detail page
-- [ ] End-to-end manual testing of cart flow (browse → add → view drawer → cart page → remove)
+- [x] End-to-end manual testing of cart flow (browse → add → view drawer → cart page → remove)
 
 ## Phase 5: Checkout + Stripe
 
