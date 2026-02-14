@@ -39,7 +39,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm md:hidden"
+      className="fixed inset-0 z-40 bg-background/95 backdrop-blur-sm md:hidden"
       onClick={onClose}
     >
       <div className="flex min-h-screen flex-col p-6">

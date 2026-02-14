@@ -16,11 +16,14 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <a href="/" className="font-serif text-2xl font-bold text-foreground">
+            <a
+              href="/"
+              className="font-serif text-2xl font-bold text-foreground"
+            >
               Wisteria
             </a>
 
@@ -95,7 +98,10 @@ export function Header() {
         </div>
       </header>
 
-      <MobileNav isOpen={mobileNavOpen} onClose={() => setMobileNavOpen(false)} />
+      <MobileNav
+        isOpen={mobileNavOpen}
+        onClose={() => setMobileNavOpen(false)}
+      />
       <CartDrawer />
     </>
   );

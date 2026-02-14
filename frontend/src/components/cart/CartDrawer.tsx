@@ -29,12 +29,22 @@ export function CartDrawer() {
   }, [isOpen, closeDrawer]);
 
   return (
-    <div
-      className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-xl z-40 transform transition-transform duration-300 ease-in-out ${
-        isOpen ? "translate-x-0" : "translate-x-full"
-      }`}
-    >
-      <div className="flex flex-col h-full">
+    <>
+      {/* Backdrop overlay — click to close */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40"
+          onClick={closeDrawer}
+          aria-hidden="true"
+        />
+      )}
+
+      <div
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">Your Cart</h2>
@@ -92,5 +102,6 @@ export function CartDrawer() {
         )}
       </div>
     </div>
+    </>
   );
 }

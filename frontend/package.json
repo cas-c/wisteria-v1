@@ -11,8 +11,7 @@
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed",
-    "docker": "docker compose -f docker/docker-compose.yml up -d --build frontend"
+    "test:e2e:headed": "playwright test --headed"
   },
   "dependencies": {
     "next": "16.1.6",
