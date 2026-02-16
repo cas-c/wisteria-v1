@@ -1,157 +1,51 @@
 # Phase Playbook — Wisteria
 
-Implementation details for each phase. Read the relevant section before
-starting work on that phase. For architecture rules and project-wide
-conventions, see [`agent-instructions.md`](agent-instructions.md).
+Implementation details for upcoming phases. For architecture rules and
+project-wide conventions, see [`agent-instructions.md`](agent-instructions.md).
+
+Completed phases (0–4C) are archived in their respective takeaway docs.
 
 ---
 
-## Phase 1: Backend Foundation ✅
-- Create `app/models/base.py` with a `Base` class that has `id` (UUID),
-  `created_at`, `updated_at` columns. All models inherit from this.
-- Product model goes in `app/models/product.py`. Use SQLAlchemy `Enum` type
-  for condition and category.
-- AdminUser model goes in `app/models/admin_user.py`.
-- After creating models, update `alembic/env.py` to import Base and set
-  `target_metadata = Base.metadata`.
-- The health endpoint should attempt a simple query (`SELECT 1`) to verify
-  the DB connection is alive.
-- Test the full Docker stack: `docker compose up` → hit health → see DB
-  connected.
-
-## Phase 2: Product CRUD + Auth ✅
-- Pydantic schemas should use `model_config = ConfigDict(from_attributes=True)`
-  to enable creating schemas from SQLAlchemy model instances.
-- Product service methods should accept `AsyncSession` as their first argument
-  (passed from the route via dependency injection).
-- JWT: use `PyJWT` with HS256. Token payload: `{"sub": admin_user.id, "exp": ...}`.
-  (Originally python-jose, swapped to PyJWT — see ADR 012.)
-- Password hashing: use `bcrypt` directly (NOT passlib — see ADR 009).
-- The seed script should be a standalone Python script (`backend/scripts/seed.py`)
-  that can be run with `python -m scripts.seed`.
-- Include edge case tests: duplicate slugs, buying unavailable products,
-  invalid JWT, expired JWT.
-- Test setup: use `NullPool` for async test engine, `TRUNCATE CASCADE`
-  for test isolation, dedicated `wisteria_test` database (see ADR 010).
-
-## Phase 3: Frontend Product Display
-- Use Server Components for product listing and detail pages.
-  Call the backend API directly (server-side fetch, no CORS needed).
-- Build small, composable UI primitives first. Don't skip this step.
-- ProductCard: image, name, price (formatted from cents), condition badge.
-- Mobile-first responsive design. Use Tailwind breakpoints (`sm:`, `md:`, `lg:`).
-- **TDD for any new backend work** (e.g., if API changes are needed for
-  the frontend). Write tests first, then implement. See ADR 011.
-
-## Phase 4A: Cart Store & State Management
-- Install `zustand` and `react-hot-toast` (for duplicate item warnings).
-- Cart store location: `frontend/src/stores/cart.ts`.
-- Use Zustand's `persist` middleware to save cart to localStorage. Key: `wisteria-cart`.
-- Cart items are full Product objects (id, name, slug, price_cents, etc.).
-- Since these are resale items (usually qty=1), adding a duplicate item should:
-  - NOT add it again or increment quantity
-  - Show a toast: "This item is already in your cart"
-- Store methods:
-  - `addItem(product: Product)` — add if not present, toast if duplicate
-  - `removeItem(productId: string)` — remove by product ID
-  - `clearCart()` — empty the cart
-  - `totalCents` — computed from `items.reduce((sum, item) => sum + item.price_cents, 0)`
-- Write unit tests for the store (Jest + @testing-library/react for hook testing).
-
-## Phase 4B: Cart UI Components
-- All cart components go in `frontend/src/components/cart/`.
-- CartItem: shows product image (thumbnail), name, formatted price, remove button.
-- CartSummary: shows item count and formatted subtotal. Used in both drawer and cart page.
-- CartDrawer: slide-out panel from right side. Use Tailwind for slide animation.
-  - Triggered by clicking cart icon in Header
-  - Shows CartItem list + CartSummary + "View Cart" link
-- Update Header: add cart icon (shopping bag) with item count badge (pill showing number).
-
-## Phase 4C: Cart Page & Integration
-- Cart page location: `frontend/src/app/cart/page.tsx`.
-- Full-width cart view with CartItem list, CartSummary, and "Proceed to Checkout" button.
-- Empty state: "Your cart is empty" with link back to /products.
-- Wire up the "Add to Cart" button on product detail page (`/products/[slug]`):
-  - Must be a Client Component (needs onClick handler)
-  - Extract button into its own component or add `"use client"` to necessary part
-- Manual test flow: browse products → add item → see drawer → add duplicate (toast) →
-  view cart page → remove item → cart updates → refresh page (persistence check).
-
 ## Phase 5: Checkout + Stripe
 - **Security:** Add request body size limit (see ADR 012).
-- **Critical:** The Stripe webhook endpoint must read the raw request body
-  for signature verification. FastAPI parses JSON by default — use
-  `Request.body()` to get raw bytes before any parsing.
-- Create Order + OrderItems in the webhook handler, NOT in the checkout
-  endpoint. The checkout endpoint only creates a Stripe session.
-- After order creation, mark all purchased products as `is_available = False`.
+- **Critical:** Stripe webhook must read raw request body for signature
+  verification. Use `Request.body()` before any JSON parsing.
+- Create Order + OrderItems in the webhook handler, NOT the checkout
+  endpoint. Checkout only creates a Stripe session.
+- After order creation, mark purchased products as `is_available = False`.
 - Send confirmation email via Resend in the webhook handler.
-- Test locally with `stripe listen --forward-to localhost:8000/api/v1/webhooks/stripe`.
-- **TDD for all checkout/webhook backend code.** Write tests for order
-  creation, webhook handling, and availability marking before implementing.
+- Test locally: `stripe listen --forward-to localhost:8000/api/v1/webhooks/stripe`
+- **TDD for all checkout/webhook backend code.**
 
 ## Phase 6: Admin Panel
 - **Security:** Add token revocation / denylist (see ADR 012).
 - JWT stored in memory (Zustand store, NOT localStorage — avoids XSS).
 - Admin layout: sidebar with nav links, main content area.
-- Auth guard: if no valid JWT, redirect to /admin/login.
-- Product soft-delete: set `is_available = False`, don't actually DELETE.
-- Order status updates: dropdown with pending → paid → shipped → cancelled.
+- Auth guard: no valid JWT → redirect to /admin/login.
+- Product soft-delete: set `is_available = False`, don't DELETE.
+- Order status flow: pending → paid → shipped → cancelled.
 
 ## Phase 7: Polish + Deploy
 - **Security:** Add security headers middleware, verify `DEBUG=false` (see ADR 012).
-- error.tsx at the app root and in key route segments.
-- Loading skeletons that match the actual content layout (not generic spinners).
-- Vercel: set `NEXT_PUBLIC_API_URL` to the Railway backend URL.
-- Railway: set all env vars from `.env.example`, use Railway's managed Postgres.
-- Production Stripe webhook URL: `https://your-railway-url/api/v1/webhooks/stripe`.
+- error.tsx at app root and key route segments.
+- Loading skeletons matching actual content layout (not generic spinners).
+- Vercel: set `NEXT_PUBLIC_API_URL` to Railway backend URL.
+- Railway: set all env vars from `.env.example`, use managed Postgres.
+- Production Stripe webhook: `https://<railway-url>/api/v1/webhooks/stripe`.
 
 ---
 
 ## Known Pitfalls
 
-Things we've hit (or expect to hit) during development. Check here if you
-encounter a confusing error.
-
-1. **Don't return SQLAlchemy models directly from routes.** Always convert to
-   Pydantic schemas. SQLAlchemy models have lazy-loaded relationships that
-   break serialization.
-
-2. **Don't forget `await` on async DB operations.** SQLAlchemy async will
-   silently return a coroutine object instead of results if you forget `await`.
-
-3. **Don't parse the Stripe webhook body as JSON before verifying the signature.**
-   The signature is computed over the raw bytes. If you parse + re-serialize,
-   the bytes change and verification fails.
-
-4. **Don't use `float` for money anywhere.** Not in Python, not in TypeScript,
-   not in the database. Always integer cents.
-
-5. **Don't commit Alembic migrations without reviewing them.** Autogenerate
-   is a suggestion, not gospel. It sometimes drops columns it shouldn't or
-   creates redundant indexes.
-
-6. **Don't use `git add .` or `git add -A`.** Always add specific files.
-   The `.env` files contain secrets.
-
-7. **Don't install frontend dependencies (Zustand, etc.) until the phase
-   that needs them.** Keeps the working tree clean and focused.
-
-8. **Don't use passlib for password hashing.** passlib is abandoned and
-   incompatible with bcrypt 4.1+. Use `bcrypt` directly. See ADR 009.
-
-9. **Don't share asyncpg connections across event loops in tests.** Use
-   `NullPool` for the test engine. asyncpg connections are bound to the
-   event loop they were created on. Without NullPool, you'll get "Future
-   attached to a different loop" errors.
-
-10. **Don't forget to TRUNCATE before tests, not just after.** Seed data
-    or data from previous test runs can pollute the first test.
-
-11. **`HTTPAuthorizationCredentials` uses `.credentials`, not `.token`.**
-    FastAPI's `HTTPBearer` returns an object with `.credentials` (the token)
-    and `.scheme` (always "Bearer").
-
-12. **Tests must use `test_database_url`, not `database_url`.** If conftest
-    points at the dev database, tests will destroy seed data and pollute
-    dev with test rows. Always use the dedicated `wisteria_test` DB.
+1. **Don't return SQLAlchemy models from routes.** Convert to Pydantic schemas.
+2. **Don't forget `await` on async DB ops.** You'll get a coroutine instead of results.
+3. **Stripe webhook: raw body before JSON parsing** for signature verification.
+4. **Never use `float` for money.** Always integer cents.
+5. **Review Alembic autogenerated migrations** before running.
+6. **Don't `git add .`** — `.env` files contain secrets.
+7. **Use `bcrypt` directly, NOT passlib** (abandoned, breaks with bcrypt 4.1+).
+8. **Use `NullPool` for test engine** — asyncpg connections bind to event loops.
+9. **TRUNCATE before AND after tests** — seed data can pollute the first test.
+10. **`HTTPAuthorizationCredentials.credentials`**, not `.token`.
+11. **Tests must use `test_database_url`**, not `database_url`.
