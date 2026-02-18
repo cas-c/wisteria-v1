@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { type ComponentPropsWithoutRef } from "react";
 
 interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
@@ -24,7 +25,8 @@ export function Button({
 
   const variantClasses = {
     primary: "bg-accent text-accent-foreground hover:bg-accent/90",
-    secondary: "bg-card text-card-foreground border border-border hover:bg-muted",
+    secondary:
+      "bg-card text-card-foreground border border-border hover:bg-muted",
     ghost: "hover:bg-muted hover:text-foreground",
   };
 
@@ -43,9 +45,9 @@ export function Button({
 
   if (href) {
     return (
-      <a href={href} className={classes}>
+      <Link href={href} className={classes}>
         {children}
-      </a>
+      </Link>
     );
   }
 

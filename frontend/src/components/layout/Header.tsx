@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MobileNav } from "./MobileNav";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { useCartStore, selectCartItemCount } from "@/stores/cart";
+import Link from "next/link";
 
 /**
  * Site header with logo, navigation, and cart icon.
@@ -20,27 +21,27 @@ export function Header() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <a
+            <Link
               href="/"
               className="font-serif text-2xl font-bold text-foreground"
             >
               Wisteria
-            </a>
+            </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <a
+              <Link
                 href="/"
                 className="text-sm font-medium text-foreground hover:text-accent transition-colors"
               >
                 Home
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/products"
                 className="text-sm font-medium text-foreground hover:text-accent transition-colors"
               >
                 Shop
-              </a>
+              </Link>
             </nav>
 
             {/* Right side: Cart + Mobile Menu */}

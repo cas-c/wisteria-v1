@@ -82,8 +82,10 @@ test.describe("Homepage", () => {
     const homeLink = page.getByRole("link", { name: "Home" });
     const shopLink = page.getByRole("link", { name: "Shop" });
 
+    expect(page.viewportSize()).not.toBeNull();
+
     // These should be visible on desktop (hidden on mobile)
-    if (page.viewportSize()?.width! >= 768) {
+    if (page.viewportSize()!.width! >= 768) {
       await expect(homeLink).toBeVisible();
       await expect(shopLink).toBeVisible();
     }

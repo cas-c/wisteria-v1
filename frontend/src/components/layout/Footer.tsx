@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 /**
  * Site footer with logo, tagline, and links.
  */
@@ -21,12 +23,12 @@ export function Footer() {
             <h4 className="text-sm font-semibold text-foreground">Shop</h4>
             <ul className="mt-4 space-y-2">
               <li>
-                <a
+                <Link
                   href="/products"
                   className="text-sm text-muted-foreground hover:text-accent transition-colors"
                 >
                   All Products
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -36,20 +38,20 @@ export function Footer() {
             <h4 className="text-sm font-semibold text-foreground">Info</h4>
             <ul className="mt-4 space-y-2">
               <li>
-                <a
+                <Link
                   href="#"
                   className="text-sm text-muted-foreground hover:text-accent transition-colors"
                 >
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a
+                <Link
                   href="#"
                   className="text-sm text-muted-foreground hover:text-accent transition-colors"
                 >
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

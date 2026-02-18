@@ -3,7 +3,8 @@
 import { cn } from "@/lib/utils";
 import { type ComponentPropsWithoutRef } from "react";
 
-interface InputProps extends ComponentPropsWithoutRef<"input"> {}
+// interface InputProps extends ComponentPropsWithoutRef<"input"> {}
+type InputProps = ComponentPropsWithoutRef<"input">;
 
 /**
  * Styled text input component.

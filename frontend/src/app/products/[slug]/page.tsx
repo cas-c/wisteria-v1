@@ -22,6 +22,7 @@ async function getProduct(slug: string): Promise<Product | null> {
       next: { revalidate: 60 },
     });
   } catch (error) {
+    console.log(error);
     return null;
   }
 }
@@ -91,9 +92,7 @@ async function ProductDetailPage({ params }: ProductDetailPageProps) {
             <ConditionBadge condition={product.condition} />
           </div>
 
-          {!product.is_available && (
-            <Badge variant="muted">Sold Out</Badge>
-          )}
+          {!product.is_available && <Badge variant="muted">Sold Out</Badge>}
 
           <p className="text-base text-foreground leading-relaxed">
             {product.description}

@@ -1,7 +1,8 @@
 import { cn } from "@/lib/utils";
 import { type ComponentPropsWithoutRef } from "react";
 
-interface SkeletonProps extends ComponentPropsWithoutRef<"div"> {}
+// interface SkeletonProps extends ComponentPropsWithoutRef<"div"> {}
+type SkeletonProps = ComponentPropsWithoutRef<"div">;
 
 /**
  * Skeleton loading placeholder with pulse animation.

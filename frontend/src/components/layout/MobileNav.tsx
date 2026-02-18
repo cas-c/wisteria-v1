@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 
 interface MobileNavProps {
@@ -69,20 +70,20 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
         {/* Navigation links */}
         <nav className="flex flex-col items-center justify-center flex-1 gap-8">
-          <a
+          <Link
             href="/"
             className="text-2xl font-medium text-foreground hover:text-accent transition-colors"
             onClick={onClose}
           >
             Home
-          </a>
-          <a
+          </Link>
+          <Link
             href="/products"
             className="text-2xl font-medium text-foreground hover:text-accent transition-colors"
             onClick={onClose}
           >
             Shop
-          </a>
+          </Link>
         </nav>
       </div>
     </div>

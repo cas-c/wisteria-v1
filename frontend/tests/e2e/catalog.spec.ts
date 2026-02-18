@@ -108,6 +108,8 @@ test.describe("Product Catalog", () => {
       has: page.locator('a[href^="/products/"]').first(),
     });
 
+    expect(grid).not.toBeNull();
+
     // Check for grid-cols-1 class (mobile layout)
     // The grid container should use responsive Tailwind classes
     const gridContainer = page.locator(

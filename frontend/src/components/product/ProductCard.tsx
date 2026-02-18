@@ -3,6 +3,7 @@ import { formatPrice } from "@/lib/utils";
 import { type Product } from "@/types";
 import { ProductImage } from "./ProductImage";
 import { ConditionBadge } from "./ConditionBadge";
+import Link from "next/link";
 
 interface ProductCardProps {
   product: Product;
@@ -14,7 +15,7 @@ interface ProductCardProps {
  */
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <a href={`/products/${product.slug}`} className="group block">
+    <Link href={`/products/${product.slug}`} className="group block">
       <Card className="h-full transition-shadow hover:shadow-md">
         <ProductImage
           name={product.name}
@@ -33,6 +34,6 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </CardContent>
       </Card>
-    </a>
+    </Link>
   );
 }
