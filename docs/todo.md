@@ -13,13 +13,14 @@ Tracks remaining work across all phases.
 - [x] Phase 4A: Cart Store & State Management
 - [x] Phase 4B: Cart UI Components
 - [x] Phase 4C: Cart Page & Integration
+- [x] Phase 5A: Order Models, Migration, and Schemas
 
 ---
 
 ## Phase 5: Checkout + Stripe
 
-- [ ] Order + OrderItem SQLAlchemy models
-- [ ] Alembic migration for orders tables
+- [x] Order + OrderItem SQLAlchemy models
+- [x] Alembic migration for orders tables
 - [ ] Stripe service (create_checkout_session)
 - [ ] POST /checkout/create-session endpoint
 - [ ] Stripe webhook endpoint (POST /webhooks/stripe)
